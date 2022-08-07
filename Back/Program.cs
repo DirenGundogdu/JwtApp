@@ -1,7 +1,11 @@
+using AutoMapper;
 using Back.Core.Application.Interfaces;
+using Back.Core.Application.Mappings;
 using Back.Persistance.Context;
 using Back.Persistance.Repositories;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,12 +15,19 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<JwtContext>( opt =>
+builder.Services.AddDbContext<JwtContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Local"));
 });
 
-builder.Services.AddScoped( typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(opt =>
+{
+    opt.AddProfiles(new List<Profile>() {
+    new ProductProfile()
+});
+});
 
 var app = builder.Build();
 
